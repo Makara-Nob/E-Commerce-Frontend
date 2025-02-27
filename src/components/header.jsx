@@ -17,7 +17,6 @@ const Header = () => {
             <Navbar user={user} />
         </div>
     </header>
-
   )
 }
 
