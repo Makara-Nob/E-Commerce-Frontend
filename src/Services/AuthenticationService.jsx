@@ -16,5 +16,5 @@ export const refreshAccessToken = async (refreshToken) => {
     const response = await Api.post(`${endpoint}/refresh-token`, {
         refresh_token: refreshToken,
     });
-    return response.data;
+    return response.data.access_token;
 }
