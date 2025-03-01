@@ -1,7 +1,7 @@
 import React from 'react';
 import ProductCard from '../components/ProductCard';
 import { useFetchProducts } from '../hooks/useFetchProducts';
-
+import HeroSection from '../components/HeroSection';
 function Shop() {
   const { data: products = [], isError, isLoading } = useFetchProducts()
 
@@ -9,7 +9,9 @@ function Shop() {
   if (isError) return <div>Error fetching products</div>;
 
   return (
-    <div className="grid grid-cols-3 gap-4 p-5">
+    <>
+      <HeroSection />
+      <div className="grid grid-cols-3 gap-4 p-5">
         {
           products?.content || Array.isArray(products.content) || products.content.length > 0 ? (
             products.content.map((product) => (
@@ -20,6 +22,7 @@ function Shop() {
           )
         }
   </div>
+    </>
   );
 }
 

@@ -14,7 +14,6 @@ const Router = () => {
             <Route path='/' element={<ShopLayout />}>
                 <Route index element={<Shop />} />
                 <Route path='/product/:id' element={<ProductDetail />} />
-                <Route path='/cart' element={<Cart />} />
             </Route>
             <Route path='/login' element={<Login />}/>
             <Route path='/dashboard' element={<DashboardLayout />}>

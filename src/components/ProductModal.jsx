@@ -151,6 +151,13 @@ const ProductModal = ({ isOpen, onClose, onSave, product }) => {
             className="w-full p-2 border rounded"
           />
 
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setImageFile(e.target.files[0])}
+            className="w-full p-2 border rounded"
+          />
+
           <div className="flex justify-end gap-2">
             <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500">
               Cancel

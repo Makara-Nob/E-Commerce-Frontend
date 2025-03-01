@@ -29,7 +29,7 @@ function ProductDetail() {
     };
 
     const imageUrl = product?.images && product.images.length > 0 ? 
-    `http://localhost:5000${product.images[0].downloadUrl}` : 
+    `${product.images[0].downloadUrl}` : 
     'https://via.placeholder.com/150';
 
     if (isLoading) return <div>Loading...</div> 
