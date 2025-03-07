@@ -15,7 +15,7 @@ export function AuthProvider({ children }){
     const [accessToken,setAccessToken] = useState(localStorage.getItem("access_token"))
 
     const { data: user, refetch, isLoading, isError } = useQuery({
-        queryFn: ["user"],
+        queryKey: ["user"],
         queryFn: fetchUser,
         enabled: !!accessToken,
         retry: false,

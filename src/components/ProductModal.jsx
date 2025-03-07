@@ -1,79 +1,60 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 const ProductModal = ({ isOpen, onClose, onSave, product }) => {
-  const defaultFormData = {
+  const [formData, setFormData] = useState({
     name: "",
     price: "",
     brand: "",
     inventory: "",
     description: "",
-    category: {
-      id: 0,
-      name: "",
-      subCategories: [],
-    },
-  };
-
-  const [formData, setFormData] = useState(defaultFormData);
-
-  useEffect(() => {
-    if (product) {
-      setFormData({
-        name: product.name || "",
-        price: product.price ? product.price.toString() : "", // Ensure it's a string
-        brand: product.brand || "",
-        inventory: product.inventory ? product.inventory.toString() : "", // Ensure it's a string
-        description: product.description || "",
-        category: {
-          id: product.category?.id || 0,
-          name: product.category?.name || "",
-          subCategories: product.category?.subCategories || [],
-        },
-      });
-    } else {
-      setFormData(defaultFormData);
-    }
-  }, [product]);
+    categoryId: ""
+  });
+  const [imageFile, setImageFile] = useState([]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    setFormData({...formData, [e.target.name]: e.target.value });
+  };
 
-    if (name === "subCategories") {
-      // Handle multiple subCategories as an array
-      setFormData((prevState) => ({
-        ...prevState,
-        category: {
-          ...prevState.category,
-          subCategories: value.split(",").map((item) => item.trim()),
-        },
-      }));
-    } else if (name.includes("category")) {
-      // Update category fields
-      const fieldName = name.split(".")[1]; // Extract "name" or "id"
-      setFormData((prevState) => ({
-        ...prevState,
-        category: {
-          ...prevState.category,
-          [fieldName]: fieldName === "id" ? Number(value) : value, // Convert ID to a number
-        },
-      }));
-    } else {
-      setFormData((prevState) => ({
-        ...prevState,
-        [name]: name === "price" || name === "inventory" ? value.replace(/\D/g, "") : value, // Ensure only numeric input
-      }));
-    }
+  const handleImageChange = (e) => {
+      setImageFile(e.target.files); 
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (
+      !formData.name ||
+      !formData.price ||
+      !formData.brand ||
+      !formData.inventory ||
+      !formData.description ||
+      imageFile.length === 0
+    ) {
+      alert("Please fill all the fields!");
+      return;
+    }
+  
     try {
-      await onSave(formData);
-      onClose();
+      const formPayload = new FormData();
+  
+      // Append the product data as a Blob (JSON) for 'product' field
+      formPayload.append(
+        "product",
+       new Blob([JSON.stringify(formData)])
+      );
+  
+      // Append the image file(s)
+     for(let i = 0; i < imageFile.length; i++){
+      formPayload.append("files",imageFile[i])
+     }
+      // Perform the POST request
+      await onSave(formPayload);
+      onClose(); // Close modal after saving
     } catch (error) {
       console.error("Error saving product:", error);
     }
   };
+  
 
   if (!isOpen) return null;
 
@@ -93,12 +74,14 @@ const ProductModal = ({ isOpen, onClose, onSave, product }) => {
             required
           />
           <input
-            type="text"
+            type="number"
             name="price"
             value={formData.price}
             onChange={handleChange}
+            step='0.01'
             placeholder="Price"
             className="w-full p-2 border rounded"
+            min="0"
             required
           />
           <input
@@ -108,14 +91,17 @@ const ProductModal = ({ isOpen, onClose, onSave, product }) => {
             onChange={handleChange}
             placeholder="Brand"
             className="w-full p-2 border rounded"
+            required
           />
           <input
-            type="text"
+            type="number"
             name="inventory"
             value={formData.inventory}
             onChange={handleChange}
             placeholder="Inventory"
             className="w-full p-2 border rounded"
+            min="0"
+            required
           />
           <textarea
             name="description"
@@ -123,47 +109,42 @@ const ProductModal = ({ isOpen, onClose, onSave, product }) => {
             onChange={handleChange}
             placeholder="Description"
             className="w-full p-2 border rounded"
+            required
           />
 
-          {/* Category Inputs */}
-          <input
-            type="text"
-            name="category.name"
-            value={formData.category.name}
-            onChange={handleChange}
-            placeholder="Category Name"
-            className="w-full p-2 border rounded"
-          />
           <input
             type="number"
-            name="category.id"
-            value={formData.category.id}
+            name="categoryId"
+            value={formData.categoryId}
             onChange={handleChange}
-            placeholder="Category ID"
+            placeholder="categoryId"
             className="w-full p-2 border rounded"
-          />
-          <input
-            type="text"
-            name="subCategories"
-            value={formData.category.subCategories.join(", ")}
-            onChange={handleChange}
-            placeholder="Subcategories (comma separated)"
-            className="w-full p-2 border rounded"
+            required
           />
 
           <input
             type="file"
+            multiple
+            name="image"
             accept="image/*"
-            onChange={(e) => setImageFile(e.target.files[0])}
+            onChange={handleImageChange}
             className="w-full p-2 border rounded"
+            required
           />
 
           <div className="flex justify-end gap-2">
-            <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
+            >
               Cancel
             </button>
-            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-              {product ? "Update" : "Add"}
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Submit
             </button>
           </div>
         </form>

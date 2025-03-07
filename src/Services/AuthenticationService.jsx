@@ -5,7 +5,7 @@ const endpoint = "/auth";
 export const loginUser = async (data) => {
     try {
         const response = await Api.post(`${endpoint}/login`, data);
-        return response.data;
+        return response.data.data;
     } catch (error) {
         console.error("Login error:", error.response?.data || error.message);
         throw error.response?.data || new Error("Login failed");

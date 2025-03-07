@@ -13,7 +13,7 @@ function Shop() {
       <HeroSection />
       <div className="grid grid-cols-3 gap-4 p-5">
         {
-          products?.content || Array.isArray(products.content) || products.content.length > 0 ? (
+          products?.content || Array.isArray(products.content) || products.content?.length > 0 ? (
             products.content.map((product) => (
               <ProductCard key={product.productId} product={product} />
             ))
