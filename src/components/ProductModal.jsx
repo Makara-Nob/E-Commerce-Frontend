@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 const ProductModal = ({ isOpen, onClose, onSave, product }) => {
   const [formData, setFormData] = useState({
@@ -28,6 +28,7 @@ const ProductModal = ({ isOpen, onClose, onSave, product }) => {
       !formData.brand ||
       !formData.inventory ||
       !formData.description ||
+      !formData.categoryId ||
       imageFile.length === 0
     ) {
       alert("Please fill all the fields!");
@@ -40,7 +41,7 @@ const ProductModal = ({ isOpen, onClose, onSave, product }) => {
       // Append the product data as a Blob (JSON) for 'product' field
       formPayload.append(
         "product",
-       new Blob([JSON.stringify(formData)])
+       JSON.stringify(formData)
       );
   
       // Append the image file(s)
@@ -55,7 +56,6 @@ const ProductModal = ({ isOpen, onClose, onSave, product }) => {
     }
   };
   
-
   if (!isOpen) return null;
 
   return (
