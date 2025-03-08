@@ -19,18 +19,16 @@ function Cart() {
   }, [dispatch, user]);
 
   const handleRemove = (itemId) => {
-    if (cartId && itemId) {
-      dispatch(removeFromCart({ cartId, itemId, userId })); // Ensure cartId and itemId are passed separately
-    } else {
-      console.error("Invalid parameters:", { cartId, itemId });
-    }
+    cartId && itemId ? 
+      dispatch(removeFromCart({ cartId, itemId, userId })) 
+    : console.error("Invalid parameters:", { cartId, itemId });
   };
 
   // Handle quantity change
   const handleQuantityChange = (itemId, newQuantity) => {
-    if (newQuantity > 0) {
-      dispatch(updateCartItemQuantity(cartIdValue, itemId, newQuantity,userId)); // Dispatch the update action with the correct cartId, itemId, and newQuantity
-    }
+    newQuantity > 0 ? 
+      dispatch(updateCartItemQuantity(cartIdValue, itemId, newQuantity,userId)) 
+    : handleRemove(itemId)
   };
 
   if (loading) return <p>Loading cart...</p>;

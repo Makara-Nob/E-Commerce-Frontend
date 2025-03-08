@@ -1,6 +1,6 @@
 import React from 'react';
 
-function CartItems({ items, removeProduct, updateProductQuantity, cartId }) {
+function CartItems({ items, removeProduct, updateProductQuantity}) {
   return (
     <div className="space-y-2">
       {items && items.length > 0 ? (
@@ -22,7 +22,7 @@ function CartItems({ items, removeProduct, updateProductQuantity, cartId }) {
             <div className="flex items-center gap-2">
               <div className="flex items-center space-x-1">
                 <button
-                  onClick={() => updateProductQuantity(cartId, item.itemId, item.quantity - 1)}
+                  onClick={() => updateProductQuantity(item.itemId, item.quantity - 1)}
                   className="bg-gray-800 text-white rounded-full w-8 h-8 flex justify-center items-center hover:bg-gray-600"
                   disabled={item.quantity < 1}
                 >
@@ -36,7 +36,7 @@ function CartItems({ items, removeProduct, updateProductQuantity, cartId }) {
                   className="w-8 text-center"
                 />
                 <button
-                  onClick={() => updateProductQuantity(cartId, item.itemId, item.quantity + 1)}
+                  onClick={() => updateProductQuantity(item.itemId, item.quantity + 1)}
                   className="bg-gray-800 text-white rounded-full w-8 h-8 flex justify-center items-center hover:bg-gray-600"
                 >
                   +
