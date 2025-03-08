@@ -5,24 +5,26 @@ import { fetchCart, updateCartItemQuantity, removeFromCart, toggleStatusTab } fr
 import { useAuth } from '../Context/AuthContext';
 
 function Cart() {
-  const { items, cartId, loading, totalAmount, statusTab } = useSelector((state) => state.cart);
+  const { items, cartId, loading, statusTab } = useSelector((state) => state.cart);
   const { user } = useAuth();
   const dispatch = useDispatch();
-
+  const userId = user?.id;
+  const cartIdValue = cartId
+  console.log("cartId at Cart: " + cartId)
   useEffect(() => {
-    if (user && user?.id) {
-      dispatch(fetchCart(user.id)); // Fetch cart on component mount
+    if (user && userId) {
+      dispatch(fetchCart(userId)); // Fetch cart on component mount
     }
   }, [dispatch, user]);
 
-  const handleRemove = (itemId) => {
-    dispatch(removeFromCart(itemId)); // Dispatch the remove action
+  const handleRemove = (cartId,itemId,userId) => {
+    dispatch(removeFromCart(cartId,itemId,userId)); // Dispatch the remove action
   };
 
   // Handle quantity change
-  const handleQuantityChange = (cartId, itemId, newQuantity) => {
+  const handleQuantityChange = (cartId, itemId, newQuantity,userId) => {
     if (newQuantity > 0) {
-      dispatch(updateCartItemQuantity(cartId, itemId, newQuantity)); // Dispatch the update action with the correct cartId, itemId, and newQuantity
+      dispatch(updateCartItemQuantity(cartId, itemId, newQuantity,userId)); // Dispatch the update action with the correct cartId, itemId, and newQuantity
     }
   };
 

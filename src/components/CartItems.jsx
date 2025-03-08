@@ -51,7 +51,7 @@ function CartItems({ items, removeProduct, updateProductQuantity, cartId }) {
               <span className="text-lg font-semibold text-gray-900">${item.totalPrice.toFixed(2)}</span>
               <button
                 onClick={() => removeProduct(item.itemId)}
-                className="bg-red-500 text-white py-1 px-4 rounded-lg hover:bg-red-600 transition-all duration-300 ease-in-out"
+                className="bg-red-500 text-white py-1 px-3 rounded-lg hover:bg-red-600 transition-all duration-300 ease-in-out"
                 aria-label={`Remove ${item.product.name} from cart`}
               >
                 Remove

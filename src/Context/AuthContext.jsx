@@ -2,6 +2,9 @@ import { createContext, useContext, useState } from "react";
 import { useQuery } from "react-query";
 import Api from "../api/api";
 import { loginUser } from "../Services/AuthenticationService";
+import { fetchCart } from "../store/cartSlice";
+import { useDispatch } from "react-redux";
+
 const AuthContext = createContext(null)
 
 const fetchUser = async () => {
@@ -12,6 +15,7 @@ const fetchUser = async () => {
   };
 
 export function AuthProvider({ children }){
+    const dispatch = useDispatch();
     const [accessToken,setAccessToken] = useState(localStorage.getItem("access_token"))
 
     const { data: user, refetch, isLoading, isError } = useQuery({
@@ -22,10 +26,18 @@ export function AuthProvider({ children }){
     })
 
     const login = async (Credential) => {
-        const res = await loginUser(Credential);
-        localStorage.setItem("access_token",res.access_token)
-        setAccessToken(res.access_token)
-        refetch()
+        try {
+            const res = await loginUser(Credential);
+            localStorage.setItem("access_token",res.access_token)
+            setAccessToken(res.access_token)
+
+            const { data: newUser } = await refetch()
+        if (newUser) {
+            dispatch(fetchCart(newUser.id))
+        }
+        } catch (error) {
+            console.error("Login failed: ",error)
+        }
     }
 
     const logout = async () => {

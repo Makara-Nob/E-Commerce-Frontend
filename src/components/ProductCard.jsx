@@ -1,10 +1,14 @@
 import React from 'react'
 import { ShoppingCartIcon } from '@heroicons/react/16/solid';
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../store/cartSlice'
+import { useAuth } from '../Context/AuthContext';
 
 function ProductCard({ product }) {
+  const { cartId } = useSelector((state) => state.cart);
+  const { user } = useAuth()
+  console.log("cartId at productCard: " + cartId)
   // Check the structure of product.images to make sure it's correct
   const imageUrl = product.images && product.images.length > 0 ? 
     `${product.images[0].downloadUrl}` : 
@@ -13,10 +17,13 @@ function ProductCard({ product }) {
   const dispatch = useDispatch();
 
   const handleAddToCart = () => {
-    dispatch(addToCart({
-      productId: product.productId,
-      quantity: 1
-    }));
+    const cartIdValue = cartId ?? null
+
+    if(!cartIdValue){
+        console.error("No cartId presented:", cartId)
+        return
+    }
+    dispatch(addToCart(cartIdValue,product.productId,1,user.id));
   };
 
   return (

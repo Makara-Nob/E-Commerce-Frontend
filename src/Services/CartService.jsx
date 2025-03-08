@@ -4,20 +4,38 @@ const endpoint = '/cart'
 
 export const getCartByUserId = async (userId) => {
     const response = await Api.get(`${endpoint}/user/${userId}`)
-    return response.data
+    return response.data.data
 }
 
-export const addItemToCart = async (productId,quantity) => {
-    const response = await Api.post(`${endpoint}/items?productId=${productId}&quantity=${quantity}`)
+// NOTE: This function will change later on response.data to response.data.data
+export const getCartByCartId = async (cartId) => {
+    const response = await Api.get(`${endpoint}/${cartId}`)
+    return response.data
+} 
+
+export const addItemToCart = async (cartId,productId,quantity) => {
+    console.log("cartId:  " + cartId + " productId: " + productId + " quantity: " + quantity)
+    const response = await Api.post(`${endpoint}/items`,{
+        cartId,
+        productId,
+        quantity
+    })
     return response.data
 }
 
 export const removeItemFromCart = async (cartId,itemId) => {
-    const response = await Api.delete(`${endpoint}/${cartId}/items/${itemId}`)
+    const response = await Api.delete(`${endpoint}/items`, {
+        cartId,
+        itemId,
+    })
     return response.data
 }
 
 export const updateItemQuantity = async (cartId,itemId,quantity) => {
-    const response = await Api.put(`${endpoint}/items?cartId=${cartId}&itemId=${itemId}&quantity=${quantity}`)
+    const response = await Api.put(`${endpoint}/items`,{
+        cartId,
+        itemId,
+        quantity
+    })
     return response.data
 }

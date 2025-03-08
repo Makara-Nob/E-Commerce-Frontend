@@ -1,6 +1,6 @@
 // src/features/cart/cartSlice.js
 import { createSlice } from '@reduxjs/toolkit';
-import { addItemToCart, getCartByUserId, removeItemFromCart, updateItemQuantity } from '../Services/CartService';
+import { addItemToCart, getCartByCartId, getCartByUserId, removeItemFromCart, updateItemQuantity } from '../Services/CartService';
 
 const initialState = {
   items: [], // This will hold the cart items (with product details)
@@ -20,8 +20,8 @@ const cartSlice = createSlice({
     setCart(state, action) {
       if (action.payload && action.payload.items) {
         state.items = action.payload.items;
-        state.totalAmount = action.payload.totalAmount || 0;
-        state.cartId = action.payload.cartId || null;  // Handle missing cartId safely
+        state.totalAmount = action.payload.totalAmount 
+        state.cartId = action.payload.cartId || state.cartId;  // Handle missing cartId safely
       } else {
         console.error('Invalid cart data:', action.payload);
         state.items = [];
@@ -47,7 +47,11 @@ export const fetchCart = (userId) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     const response = await getCartByUserId(userId);
-    dispatch(setCart(response)); // Assuming API returns cart data with items and totalAmount
+    if(response) {
+      dispatch(setCart(response)); 
+    } else {
+      console.warn('Empty cart response')
+    }
   } catch (error) {
     console.error('Failed to fetch cart:', error);
   } finally {
@@ -56,12 +60,17 @@ export const fetchCart = (userId) => async (dispatch) => {
 };
 
 // Add item to the cart
-export const addToCart = (productId, quantity) => async (dispatch) => {
+export const addToCart = (cartId,productId,quantity,userId) => async (dispatch,getState) => {
+  if (!cartId || !productId || !quantity) {
+    console.error("Invalid parameters:", { cartId, productId, quantity });
+    return;
+  }
   dispatch(setLoading(true));
   try {
-    await addItemToCart(productId, quantity);
+    console.log("Sending request with:", { cartId, productId, quantity });
+    await addItemToCart(cartId,productId,quantity);
     // Fetch the updated cart after adding the item
-    dispatch(fetchCart()); // Optionally fetch cart again to get updated state
+    dispatch(fetchCart(userId)); // Optionally fetch cart again to get updated state
   } catch (error) {
     console.error('Failed to add item to cart:', error);
   } finally {
@@ -70,12 +79,12 @@ export const addToCart = (productId, quantity) => async (dispatch) => {
 };
 
 // Remove item from the cart
-export const removeFromCart = (itemId) => async (dispatch) => {
+export const removeFromCart = (cartId,itemId,userId) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
-    await removeItemFromCart(itemId);
+    await removeItemFromCart(cartId,itemId);
     // Fetch the updated cart after removing item
-    dispatch(fetchCart());
+    dispatch(fetchCart(userId));
   } catch (error) {
     console.error('Failed to remove item from cart:', error);
   } finally {
@@ -84,12 +93,12 @@ export const removeFromCart = (itemId) => async (dispatch) => {
 };
 
 // Update item quantity in the cart
-export const updateCartItemQuantity = (cartId, itemId, quantity) => async (dispatch) => {
+export const updateCartItemQuantity = (cartId, itemId, quantity,userId) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     await updateItemQuantity(cartId, itemId, quantity);
     // Fetch the updated cart after updating item quantity
-    dispatch(fetchCart());
+    dispatch(fetchCart(userId));
   } catch (error) {
     console.error('Failed to update item quantity:', error);
   } finally {
