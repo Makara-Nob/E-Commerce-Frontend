@@ -25,8 +25,10 @@ export const addItemToCart = async (cartId,productId,quantity) => {
 
 export const removeItemFromCart = async (cartId,itemId) => {
     const response = await Api.delete(`${endpoint}/items`, {
-        cartId,
-        itemId,
+        params: {
+            cartId,
+            itemId,
+        }
     })
     return response.data
 }

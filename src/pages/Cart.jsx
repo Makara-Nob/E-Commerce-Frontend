@@ -9,7 +9,8 @@ function Cart() {
   const { user } = useAuth();
   const dispatch = useDispatch();
   const userId = user?.id;
-  const cartIdValue = cartId
+  const cartIdValue = cartId ?? null
+
   console.log("cartId at Cart: " + cartId)
   useEffect(() => {
     if (user && userId) {
@@ -17,14 +18,18 @@ function Cart() {
     }
   }, [dispatch, user]);
 
-  const handleRemove = (cartId,itemId,userId) => {
-    dispatch(removeFromCart(cartId,itemId,userId)); // Dispatch the remove action
+  const handleRemove = (itemId) => {
+    if (cartId && itemId) {
+      dispatch(removeFromCart({ cartId, itemId, userId })); // Ensure cartId and itemId are passed separately
+    } else {
+      console.error("Invalid parameters:", { cartId, itemId });
+    }
   };
 
   // Handle quantity change
-  const handleQuantityChange = (cartId, itemId, newQuantity,userId) => {
+  const handleQuantityChange = (itemId, newQuantity) => {
     if (newQuantity > 0) {
-      dispatch(updateCartItemQuantity(cartId, itemId, newQuantity,userId)); // Dispatch the update action with the correct cartId, itemId, and newQuantity
+      dispatch(updateCartItemQuantity(cartIdValue, itemId, newQuantity,userId)); // Dispatch the update action with the correct cartId, itemId, and newQuantity
     }
   };
 

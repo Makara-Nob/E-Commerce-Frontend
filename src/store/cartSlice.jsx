@@ -17,6 +17,13 @@ const cartSlice = createSlice({
     setLoading(state, action) {
       state.loading = action.payload;
     },
+    removeItemFromCartRedux: (state,action) => {
+        const { cartId, itemId } = action.payload
+
+        if (state.cartId === cartId ) {
+          state.items = state.items.filter(item => item.itemId !== itemId)
+        }
+    },
     setCart(state, action) {
       if (action.payload && action.payload.items) {
         state.items = action.payload.items;
@@ -40,7 +47,7 @@ const cartSlice = createSlice({
   },
 });
 
-export const { setLoading, setCart, clearCart, toggleStatusTab } = cartSlice.actions;
+export const { setLoading, setCart, clearCart, toggleStatusTab, removeItemFromCartRedux } = cartSlice.actions;
 
 // Fetch the cart by userId
 export const fetchCart = (userId) => async (dispatch) => {
@@ -79,7 +86,13 @@ export const addToCart = (cartId,productId,quantity,userId) => async (dispatch,g
 };
 
 // Remove item from the cart
-export const removeFromCart = (cartId,itemId,userId) => async (dispatch) => {
+export const removeFromCart = (cartDetails) => async (dispatch) => {
+    const { cartId, itemId, userId } = cartDetails; // Destructure cartId and itemId here
+    console.error("Invalid parameters:", { cartId, itemId });
+   if (!cartId || !itemId) {
+    console.error("Invalid parameters:", { cartId, itemId });
+    return;
+    }
   dispatch(setLoading(true));
   try {
     await removeItemFromCart(cartId,itemId);

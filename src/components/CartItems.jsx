@@ -44,7 +44,6 @@ function CartItems({ items, removeProduct, updateProductQuantity, cartId }) {
               </div>
             </div>
             
-
             {/* Price and Remove Button */}
             <div className="flex flex-col items-center space-y-2">
               <span className="text-sm text-gray-500">Total</span>
