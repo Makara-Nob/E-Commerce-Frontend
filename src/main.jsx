@@ -6,17 +6,18 @@ import { Provider } from 'react-redux'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import Store from './store/index.jsx'
 import { BrowserRouter } from 'react-router-dom'
+import { AuthProvider } from './Context/AuthContext.jsx'
 
 const queryClient = new QueryClient()
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <Provider store={Store}>
-          <App />
-        </Provider>
-      </QueryClientProvider>
-    </BrowserRouter>
-  </StrictMode>,
+    <QueryClientProvider client={queryClient}>
+    <Provider store={Store}>
+      <AuthProvider>
+      <BrowserRouter>
+            <App />
+      </BrowserRouter>
+      </AuthProvider>
+    </Provider>
+   </QueryClientProvider>
 )

@@ -1,18 +1,19 @@
 import React, { useState } from "react";
-import { useAuth } from "../hooks/useAuth";
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../Context/AuthContext";
 
 function Login() {
-  const { login, isLoading, error } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate()
+  const { login, isLoading, isError } = useAuth()
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    try {
-      login({ email, password });
-    } catch (err) {
-      console.error("Login error:", err.message);
+    const credentials = { email, password }
+    const result = login(credentials)
+    if (result) {
+      navigate("/")
     }
   };
 
@@ -22,8 +23,8 @@ function Login() {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white text-center">
           Sign in to your account
         </h1>
-        {error && <p className="text-sm text-red-500 text-center">{error.message}</p>}
-        <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
+        {isError && <p className="text-sm text-red-500 text-center">{isError.message}</p>}
+        <form className="mt-4 space-y-4" onSubmit={handleLogin}>
           {/* Email Field */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-900 dark:text-white">
@@ -61,8 +62,6 @@ function Login() {
             <label className="flex items-center text-sm text-gray-500 dark:text-gray-300">
               <input
                 type="checkbox"
-                checked={rememberMe}
-                onChange={() => setRememberMe(!rememberMe)}
                 className="mr-2"
               />
               Remember me

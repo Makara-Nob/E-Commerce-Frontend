@@ -28,11 +28,13 @@ function ProductTable({ products, isLoading, isError, isRefetch }) {
   };
 
   const handleSaveProduct = async (data) => {
+      console.log("Handle save product : " + data)
       try {
           if (selectedProduct) {
               await ProductService.updateProduct(selectedProduct.productId, data)
           } else {
-              await ProductService.addProduct(data);
+              const result = await ProductService.addProduct(data);
+              console.log('Saved Product:', result);
           }
           setModalOpen(false);
           isRefetch();
@@ -98,8 +100,8 @@ const handleDeleteProduct = async (productId) => {
               Array.isArray(products) || products?.length > 0 ? (
                 products.map((product, index) => {
                   const imageUrl = product?.images && product.images.length > 0 ? 
-                        `http://localhost:5000${product.images[0].downloadUrl}` : 
-                        'https://via.placeholder.com/150';
+                        `${product.images[0].downloadUrl}` : 
+                        'https://www.dummyimage.co.uk/50x50/cbcbcb';
     
                   return (
                   <tr key={index} className="border-b hover:bg-gray-50">
