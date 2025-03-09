@@ -30,7 +30,7 @@ function ProductDetail() {
 
     const imageUrl = product?.images && product.images.length > 0 ? 
     `${product.images[0].downloadUrl}` : 
-    'https://via.placeholder.com/150';
+    'https://www.dummyimage.co.uk/50x50/cbcbcb';
 
     if (isLoading) return <div>Loading...</div> 
     if (error) return <p>Error loading product</p>;

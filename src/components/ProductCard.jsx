@@ -8,17 +8,17 @@ import { useAuth } from '../Context/AuthContext';
 function ProductCard({ product }) {
   const { cartId } = useSelector((state) => state.cart);
   const { user } = useAuth()
-  console.log("cartId at productCard: " + cartId)
   // Check the structure of product.images to make sure it's correct
   const imageUrl = product.images && product.images.length > 0 ? 
     `${product.images[0].downloadUrl}` : 
-    'https://via.placeholder.com/150'; // fallback image if no downloadUrl
+    'https://www.dummyimage.co.uk/50x50/cbcbcb'; // fallback image if no downloadUrl
 
   const dispatch = useDispatch();
 
   const handleAddToCart = () => {
     const cartIdValue = cartId ?? null
 
+    console.log("cartValue: ", cartIdValue)
     if(!cartIdValue){
         console.error("No cartId presented:", cartId)
         return

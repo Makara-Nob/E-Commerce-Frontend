@@ -13,13 +13,14 @@ export const getCartByCartId = async (cartId) => {
     return response.data
 } 
 
-export const addItemToCart = async (cartId,productId,quantity) => {
-    console.log("cartId:  " + cartId + " productId: " + productId + " quantity: " + quantity)
+export const addItemToCart = async (cartId,itemId,quantity) => {
+    console.log("cartId:  " + cartId + " productId: " + itemId + " quantity: " + quantity)
     const response = await Api.post(`${endpoint}/items`,{
         cartId,
-        productId,
+        itemId,
         quantity
     })
+    console.log("response:  ",response)
     return response.data
 }
 

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { useQuery } from "react-query";
 import Api from "../api/api";
 import { loginUser } from "../Services/AuthenticationService";
@@ -18,23 +18,27 @@ export function AuthProvider({ children }){
     const dispatch = useDispatch();
     const [accessToken,setAccessToken] = useState(localStorage.getItem("access_token"))
 
+    
     const { data: user, refetch, isLoading, isError } = useQuery({
         queryKey: ["user"],
         queryFn: fetchUser,
         enabled: !!accessToken,
         retry: false,
     })
+    
+    useEffect(() => {
+      if (user && user?.id) {
+        dispatch(fetchCart(user.id)); // Fetch cart on component mount
+      }
+    }, [user, dispatch]);
 
     const login = async (Credential) => {
         try {
             const res = await loginUser(Credential);
             localStorage.setItem("access_token",res.access_token)
             setAccessToken(res.access_token)
-
             const { data: newUser } = await refetch()
-        if (newUser) {
-            dispatch(fetchCart(newUser.id))
-        }
+            if (newUser) dispatch(fetchCart(newUser.id)); 
         } catch (error) {
             console.error("Login failed: ",error)
         }

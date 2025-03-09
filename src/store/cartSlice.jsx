@@ -1,6 +1,6 @@
 // src/features/cart/cartSlice.js
 import { createSlice } from '@reduxjs/toolkit';
-import { addItemToCart, getCartByCartId, getCartByUserId, removeItemFromCart, updateItemQuantity } from '../Services/CartService';
+import { addItemToCart, getCartByUserId, removeItemFromCart, updateItemQuantity } from '../Services/CartService';
 
 const initialState = {
   items: [], // This will hold the cart items (with product details)
@@ -67,15 +67,14 @@ export const fetchCart = (userId) => async (dispatch) => {
 };
 
 // Add item to the cart
-export const addToCart = (cartId,productId,quantity,userId) => async (dispatch,getState) => {
-  if (!cartId || !productId || !quantity) {
-    console.error("Invalid parameters:", { cartId, productId, quantity });
+export const addToCart = (cartId,itemId,quantity,userId) => async (dispatch) => {
+  if (!cartId || !itemId || !quantity) {
+    console.error("Invalid parameters:", { cartId, itemId, quantity });
     return;
   }
   dispatch(setLoading(true));
   try {
-    console.log("Sending request with:", { cartId, productId, quantity });
-    await addItemToCart(cartId,productId,quantity);
+    await addItemToCart(cartId,itemId,quantity);
     // Fetch the updated cart after adding the item
     dispatch(fetchCart(userId)); // Optionally fetch cart again to get updated state
   } catch (error) {
@@ -88,7 +87,6 @@ export const addToCart = (cartId,productId,quantity,userId) => async (dispatch,g
 // Remove item from the cart
 export const removeFromCart = (cartDetails) => async (dispatch) => {
     const { cartId, itemId, userId } = cartDetails; // Destructure cartId and itemId here
-    console.error("Invalid parameters:", { cartId, itemId });
    if (!cartId || !itemId) {
     console.error("Invalid parameters:", { cartId, itemId });
     return;

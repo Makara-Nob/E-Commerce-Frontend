@@ -11,13 +11,6 @@ function Cart() {
   const userId = user?.id;
   const cartIdValue = cartId ?? null
 
-  console.log("cartId at Cart: " + cartId)
-  useEffect(() => {
-    if (user && userId) {
-      dispatch(fetchCart(userId)); // Fetch cart on component mount
-    }
-  }, [dispatch, user]);
-
   const handleRemove = (itemId) => {
     cartId && itemId ? 
       dispatch(removeFromCart({ cartId, itemId, userId })) 

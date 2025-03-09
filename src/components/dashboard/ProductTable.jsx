@@ -101,7 +101,7 @@ const handleDeleteProduct = async (productId) => {
                 products.map((product, index) => {
                   const imageUrl = product?.images && product.images.length > 0 ? 
                         `${product.images[0].downloadUrl}` : 
-                        'https://via.placeholder.com/150';
+                        'https://www.dummyimage.co.uk/50x50/cbcbcb';
     
                   return (
                   <tr key={index} className="border-b hover:bg-gray-50">

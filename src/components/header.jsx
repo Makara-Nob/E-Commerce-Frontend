@@ -2,8 +2,10 @@ import React from 'react'
 import Navbar from './navbar'
 import { Link } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
+import { useDispatch } from 'react-redux';
 
 const Header = () => {
+  const dispatch = useDispatch()
   const { user, logout }= useAuth()
   const handleLogout = () => {
     dispatch(logout())

@@ -52,7 +52,7 @@ function Navbar({ user, logout }) {
           <div className="flex flex-col items-center">
             <NavLink to="/profile">
               <img
-                src={"https://via.placeholder.com/50"} // Default avatar
+                src={"https://www.dummyimage.co.uk/50x50/cbcbcb"} // Default avatar
                 alt="User Profile"
                 className="w-10 h-10 rounded-full border border-gray-300 shadow-md"
               />
