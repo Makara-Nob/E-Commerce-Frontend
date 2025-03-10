@@ -1,11 +1,12 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { toggleStatusTab } from '../store/cartSlice';
 import { ShoppingBagIcon } from '@heroicons/react/16/solid';
 function Navbar({ user, logout }) {
   const dispatch = useDispatch()
-
+  const items = useSelector((state) => state.cart.items)
+  
   return (
     <nav className="flex px-6 py-4 bg-white rounded-2xl">
       <div className="flex items-center space-x-4">
@@ -21,7 +22,6 @@ function Navbar({ user, logout }) {
         {/* Authentication (Login / Logout) */}
         {user ? (
           <button
-            className="bg-gray-700 hover:bg-gray-600 text-white font-semibold text-sm px-3 py-2 rounded-lg transition-all duration-300 shadow-md"
             onClick={logout}
           >
             Logout
@@ -42,7 +42,7 @@ function Navbar({ user, logout }) {
           >
             <ShoppingBagIcon className="w-6 h-6 text-gray-700" />
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex justify-center items-center">
-                0
+                {items.length}
               </span>
           </div>
         )}
