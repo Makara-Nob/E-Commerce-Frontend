@@ -10,10 +10,10 @@ const Header = () => {
   const handleLogout = () => {
     dispatch(logout())
   }
-
+  
   return (
     <header className="flex rounded-2xl justify-between items-center mb-5 px-2 bg-white shadow-md">
-        <div className="text-xl font-bold">
+        <div className="text-2xl font-bold">
             <Link to="/">MyApp</Link>
         </div>
         <div className="flex items-center gap-4"> 

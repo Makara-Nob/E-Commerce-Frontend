@@ -39,7 +39,6 @@ Api.interceptors.response.use(
             return Promise.reject(new Error("Network error, please try again."))
         }
         const originalRequest = error.config
-        // Handle 401 Unauthorized
         if (error.response.status === 401 && !originalRequest._retry) {
             if(isRefreshing) return Promise.reject(error);
             isRefreshing = true
@@ -57,7 +56,6 @@ Api.interceptors.response.use(
                 return Promise.reject(new Error("Session expired. Please log in again."))
             }
         }
-        // Handle 500 Internal Server Error
         if (error.response.status === 500) {
             console.error('Server error:', error)
             return Promise.reject(new Error('Internal server error. Please try again later.'))

@@ -41,12 +41,13 @@ const cartSlice = createSlice({
     },
     updateCartItemQuantityReduxd: (state,action) => {
         const { cartId, itemId, quantity } = action.payload
-
         if(state.cartId === cartId) {
           const item = state.items.find(item => item.itemId === itemId)
-          if (item) {
+          if (quantity > 0) {
             item.quantity = quantity;
             item.totalPrice = item.unitPrice * quantity
+          } else {
+            delete state.items[item]
           }
         }
     },
