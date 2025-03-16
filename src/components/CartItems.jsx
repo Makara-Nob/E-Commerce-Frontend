@@ -1,6 +1,30 @@
 import React from 'react';
+import { removeFromCart, updateCartItemQuantity } from '../store/cartSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { useAuth } from '../Context/AuthContext';
 
-function CartItems({ items, removeProduct, updateProductQuantity}) {
+function CartItems() {
+
+  const { items, cartId, loading } = useSelector((state) => state.cart);
+  const { user } = useAuth();
+  const dispatch = useDispatch();
+  const userId = user?.id;
+  const cartIdValue = cartId ?? null
+  const handleRemove = (itemId) => {
+    cartId && itemId ? 
+      dispatch(removeFromCart({ cartId, itemId })) 
+    : console.error("Invalid parameters:", { cartId, itemId });
+  };
+
+  // Handle quantity change
+  const handleQuantityChange = (itemId, newQuantity) => {
+    newQuantity > 0 ? 
+      dispatch(updateCartItemQuantity(cartIdValue, itemId, newQuantity,userId)) 
+    : handleRemove(itemId)
+  };
+
+  if (loading) return <p>Loading cart...</p>;
+
   return (
     <div className="space-y-2">
       {items && items.length > 0 ? (
@@ -10,7 +34,7 @@ function CartItems({ items, removeProduct, updateProductQuantity}) {
             className="bg-white shadow-lg rounded-lg p-4 flex justify-between items-center space-x-4 transform transition-all duration-300 ease-in-out"
           >          
               <img
-                src={item.product.images[0]?.downloadUrl || '/path/to/default-image.jpg'} // Handle missing images
+                src={item.product.images[0]?.downloadUrl || 'https://www.dummyimage.co.uk/50x50/cbcbcb'} // Handle missing images
                 alt={item.product.name}
                  className="w-16 h-16 object-cover rounded-md"
               />
@@ -22,7 +46,7 @@ function CartItems({ items, removeProduct, updateProductQuantity}) {
             <div className="flex items-center gap-2">
               <div className="flex items-center space-x-1">
                 <button
-                  onClick={() => updateProductQuantity(item.itemId, item.quantity - 1)}
+                  onClick={() => handleQuantityChange(item.itemId, item.quantity - 1)}
                   className="bg-gray-800 text-white rounded-full w-8 h-8 flex justify-center items-center hover:bg-gray-600"
                   disabled={item.quantity < 1}
                 >
@@ -36,7 +60,7 @@ function CartItems({ items, removeProduct, updateProductQuantity}) {
                   className="w-8 text-center"
                 />
                 <button
-                  onClick={() => updateProductQuantity(item.itemId, item.quantity + 1)}
+                  onClick={() => handleQuantityChange(item.itemId, item.quantity + 1)}
                   className="bg-gray-800 text-white rounded-full w-8 h-8 flex justify-center items-center hover:bg-gray-600"
                 >
                   +
@@ -49,9 +73,9 @@ function CartItems({ items, removeProduct, updateProductQuantity}) {
               <span className="text-sm text-gray-500">Total</span>
               <span className="text-lg font-semibold text-gray-900">${item.totalPrice.toFixed(2)}</span>
               <button
-                onClick={() => removeProduct(item.itemId)}
-                className="bg-red-500 text-white py-1 px-3 rounded-lg hover:bg-red-600 transition-all duration-300 ease-in-out"
-                aria-label={`Remove ${item.product.name} from cart`}
+                onClick={() => handleRemove(item.itemId)}
+                className="bg-red-500 text-white py-1 px-2 rounded-lg hover:bg-red-600 transition-all duration-300 ease-in-out"
+                aria-label='Remove'
               >
                 Remove
               </button>

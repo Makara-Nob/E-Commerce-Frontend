@@ -17,11 +17,38 @@ const cartSlice = createSlice({
     setLoading(state, action) {
       state.loading = action.payload;
     },
+    addItemToCartRedux: (state,action) => {
+      const { itemId, quantity, unitPrice, product } = action.payload
+      const item = state.items.find(item => item.itemId === itemId)
+      if (item) {
+        item.quantity += quantity,
+        item.totalPrice = item.unitPrice * item.quantity
+      } else {
+        state.items.push({
+          itemId,
+          quantity,
+          unitPrice,
+          product,
+          totalPrice: unitPrice * quantity
+        })
+      }
+    },
     removeItemFromCartRedux: (state,action) => {
         const { cartId, itemId } = action.payload
-
         if (state.cartId === cartId ) {
           state.items = state.items.filter(item => item.itemId !== itemId)
+        }
+    },
+    updateCartItemQuantityReduxd: (state,action) => {
+        const { cartId, itemId, quantity } = action.payload
+        if(state.cartId === cartId) {
+          const item = state.items.find(item => item.itemId === itemId)
+          if (quantity > 0) {
+            item.quantity = quantity;
+            item.totalPrice = item.unitPrice * quantity
+          } else {
+            delete state.items[item]
+          }
         }
     },
     setCart(state, action) {
@@ -47,7 +74,7 @@ const cartSlice = createSlice({
   },
 });
 
-export const { setLoading, setCart, clearCart, toggleStatusTab, removeItemFromCartRedux } = cartSlice.actions;
+export const { setLoading, setCart, clearCart, toggleStatusTab, addItemToCartRedux,updateCartItemQuantityReduxd, removeItemFromCartRedux } = cartSlice.actions;
 
 // Fetch the cart by userId
 export const fetchCart = (userId) => async (dispatch) => {
@@ -67,7 +94,8 @@ export const fetchCart = (userId) => async (dispatch) => {
 };
 
 // Add item to the cart
-export const addToCart = (cartId,itemId,quantity,userId) => async (dispatch) => {
+export const addToCart = (details) => async (dispatch) => {
+  const { cartId, itemId, quantity, unitPrice, product } = details
   if (!cartId || !itemId || !quantity) {
     console.error("Invalid parameters:", { cartId, itemId, quantity });
     return;
@@ -76,7 +104,8 @@ export const addToCart = (cartId,itemId,quantity,userId) => async (dispatch) => 
   try {
     await addItemToCart(cartId,itemId,quantity);
     // Fetch the updated cart after adding the item
-    dispatch(fetchCart(userId)); // Optionally fetch cart again to get updated state
+    dispatch(addItemToCartRedux({ cartId, itemId, quantity, unitPrice, product })); 
+
   } catch (error) {
     console.error('Failed to add item to cart:', error);
   } finally {
@@ -86,7 +115,7 @@ export const addToCart = (cartId,itemId,quantity,userId) => async (dispatch) => 
 
 // Remove item from the cart
 export const removeFromCart = (cartDetails) => async (dispatch) => {
-    const { cartId, itemId, userId } = cartDetails; // Destructure cartId and itemId here
+    const { cartId, itemId } = cartDetails; // Destructure cartId and itemId here
    if (!cartId || !itemId) {
     console.error("Invalid parameters:", { cartId, itemId });
     return;
@@ -95,7 +124,7 @@ export const removeFromCart = (cartDetails) => async (dispatch) => {
   try {
     await removeItemFromCart(cartId,itemId);
     // Fetch the updated cart after removing item
-    dispatch(fetchCart(userId));
+    dispatch(removeItemFromCartRedux({ cartId, itemId}));
   } catch (error) {
     console.error('Failed to remove item from cart:', error);
   } finally {
@@ -104,12 +133,12 @@ export const removeFromCart = (cartDetails) => async (dispatch) => {
 };
 
 // Update item quantity in the cart
-export const updateCartItemQuantity = (cartId, itemId, quantity,userId) => async (dispatch) => {
+export const updateCartItemQuantity = (cartId, itemId, quantity) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     await updateItemQuantity(cartId, itemId, quantity);
     // Fetch the updated cart after updating item quantity
-    dispatch(fetchCart(userId));
+    dispatch(updateCartItemQuantityReduxd({cartId,itemId,quantity}));
   } catch (error) {
     console.error('Failed to update item quantity:', error);
   } finally {

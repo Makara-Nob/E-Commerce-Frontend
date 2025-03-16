@@ -14,7 +14,7 @@ function Login() {
     const result = login(credentials)
     if (result) {
       navigate("/")
-    }
+    }7
   };
 
   return (

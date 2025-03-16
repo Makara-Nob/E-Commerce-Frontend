@@ -3,11 +3,9 @@ import { ShoppingCartIcon } from '@heroicons/react/16/solid';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../store/cartSlice'
-import { useAuth } from '../Context/AuthContext';
 
 function ProductCard({ product }) {
   const { cartId } = useSelector((state) => state.cart);
-  const { user } = useAuth()
   // Check the structure of product.images to make sure it's correct
   const imageUrl = product.images && product.images.length > 0 ? 
     `${product.images[0].downloadUrl}` : 
@@ -15,15 +13,19 @@ function ProductCard({ product }) {
 
   const dispatch = useDispatch();
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (product) => {
     const cartIdValue = cartId ?? null
-
-    console.log("cartValue: ", cartIdValue)
     if(!cartIdValue){
         console.error("No cartId presented:", cartId)
         return
     }
-    dispatch(addToCart(cartIdValue,product.productId,1,user.id));
+    dispatch(addToCart({
+      cartId: cartIdValue,
+      itemId: product.productId,
+      quantity: 1,
+      product: product,
+      unitPrice: product.price
+    }));
   };
 
   return (
@@ -49,7 +51,7 @@ function ProductCard({ product }) {
         </p>
         <button
           className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg shadow-sm transition-all duration-300"
-          onClick={handleAddToCart}
+          onClick={() => handleAddToCart(product)}
           aria-label="Add to cart"
         >
           <ShoppingCartIcon className="size-[1.5rem]" />

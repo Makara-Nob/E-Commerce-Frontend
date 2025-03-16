@@ -12,23 +12,22 @@ const fetchUser = async () => {
     const { id, name, email, authorities, enabled } = res.data;
     const roles = authorities.map((auth) => auth.authority)
     return { id, name, email, roles, enabled };
-  };
+};
 
 export function AuthProvider({ children }){
     const dispatch = useDispatch();
-    const [accessToken,setAccessToken] = useState(localStorage.getItem("access_token"))
+    const [accessToken,setAccessToken] = useState(() => localStorage.getItem("access_token"))
 
     
     const { data: user, refetch, isLoading, isError } = useQuery({
         queryKey: ["user"],
         queryFn: fetchUser,
         enabled: !!accessToken,
-        retry: false,
     })
     
     useEffect(() => {
       if (user && user?.id) {
-        dispatch(fetchCart(user.id)); // Fetch cart on component mount
+        dispatch(fetchCart(user.id)); 
       }
     }, [user, dispatch]);
 
